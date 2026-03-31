@@ -24,7 +24,6 @@ fs.readFile("../1-node-farm/txt/start.txt", "utf-8", (err, data1) => {
         (err) => {
           console.log("your file has been written");
         },
-        d,
       );
     });
   });
@@ -32,6 +31,13 @@ fs.readFile("../1-node-farm/txt/start.txt", "utf-8", (err, data1) => {
 
 ///////////////////////////
 //SERVER
+//
+
+// reading the json file outside the server so that it will readonce and performance will improve. Using readFileSync this will read file synchronously(blocking code)
+// {__dirname} this is current folder path and this is safe to use
+const data = fs.readFileSync(`${__dirname}/dev-data/data.json`, "utf-8");
+const dataObj = JSON.parse(data);
+
 const server = http.createServer((req, res) => {
   console.log(req.url);
 
@@ -40,6 +46,13 @@ const server = http.createServer((req, res) => {
     res.end("this is the overview");
   } else if (pathName === "/product") {
     res.end("this is the product");
+  } else if (pathName === "/api") {
+    // building api
+
+    res.writeHead(200, {
+      "content-type": "application/json",
+    });
+    res.end(data);
   } else {
     res.writeHead(404, {
       "Content-type": "text/html",
